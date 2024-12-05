@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Table(name = "employees")
 public class EmployeeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private String name;
     private String email;
