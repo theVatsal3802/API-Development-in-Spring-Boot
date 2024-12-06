@@ -2,12 +2,15 @@ package com.vatsaladhiya.apidev.apidev.controllers;
 
 import com.vatsaladhiya.apidev.apidev.dto.EmployeeDTO;
 import com.vatsaladhiya.apidev.apidev.services.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -22,7 +25,14 @@ public class EmployeeController {
     @GetMapping(path = "/{employeeId}")
     public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long employeeId) {
         Optional<EmployeeDTO> employeeDTO = employeeService.getEmployeeById(employeeId);
-        return employeeDTO.map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1)).orElse(ResponseEntity.notFound().build());
+        return employeeDTO
+                .map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1))
+                .orElseThrow(() -> new NoSuchElementException("Employee Not Found"));
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<String> handleNotFoundExceptions(NoSuchElementException exception) {
+        return new ResponseEntity<>("Employee not found", HttpStatus.NOT_FOUND);
     }
 
     @GetMapping
@@ -31,7 +41,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeDTO> createNewEmployee(@RequestBody EmployeeDTO employee) {
+    public ResponseEntity<EmployeeDTO> createNewEmployee(@RequestBody @Valid EmployeeDTO employee) {
         EmployeeDTO savedEmployee = employeeService.createNewEmployee(employee);
         return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
     }
