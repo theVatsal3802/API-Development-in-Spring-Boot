@@ -1,10 +1,10 @@
 package com.vatsaladhiya.apidev.apidev.controllers;
 
 import com.vatsaladhiya.apidev.apidev.dto.EmployeeDTO;
+import com.vatsaladhiya.apidev.apidev.exceptions.ResourceNotFoundException;
 import com.vatsaladhiya.apidev.apidev.services.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,12 +27,7 @@ public class EmployeeController {
         Optional<EmployeeDTO> employeeDTO = employeeService.getEmployeeById(employeeId);
         return employeeDTO
                 .map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1))
-                .orElseThrow(() -> new NoSuchElementException("Employee Not Found"));
-    }
-
-    @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<String> handleNotFoundExceptions(NoSuchElementException exception) {
-        return new ResponseEntity<>("Employee not found", HttpStatus.NOT_FOUND);
+                .orElseThrow(() -> new ResourceNotFoundException("Employee Not Found with id: " + employeeId));
     }
 
     @GetMapping
