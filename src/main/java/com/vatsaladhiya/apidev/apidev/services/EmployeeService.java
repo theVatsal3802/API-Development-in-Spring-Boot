@@ -53,13 +53,6 @@ public class EmployeeService {
         return modelMapper.map(savedEmployeeEntity, EmployeeDTO.class);
     }
 
-    public void isEmployeeExistsById(Long employeeId) {
-        boolean exists = employeeRepository.existsById(employeeId);
-        if (!exists) {
-            throw new ResourceNotFoundException("Employee not found with id: " + employeeId);
-        }
-    }
-
     public boolean deleteEmployeeById(Long employeeId) {
         isEmployeeExistsById(employeeId);
         employeeRepository.deleteById(employeeId);
@@ -75,5 +68,12 @@ public class EmployeeService {
             ReflectionUtils.setField(fieldToBeUpdated, employeeEntity, value);
         });
         return modelMapper.map(employeeRepository.save(employeeEntity), EmployeeDTO.class);
+    }
+
+    public void isEmployeeExistsById(Long employeeId) {
+        boolean exists = employeeRepository.existsById(employeeId);
+        if (!exists) {
+            throw new ResourceNotFoundException("Employee not found with id: " + employeeId);
+        }
     }
 }
